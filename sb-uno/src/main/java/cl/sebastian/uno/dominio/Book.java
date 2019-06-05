@@ -19,7 +19,7 @@ public class Book {
   private long id;
   private String title;
   private String isbn;
-  @OneToOne(cascade = CascadeType.ALL)
+  @OneToOne
   private Publisher publisher;
   @ManyToMany
   @JoinTable(

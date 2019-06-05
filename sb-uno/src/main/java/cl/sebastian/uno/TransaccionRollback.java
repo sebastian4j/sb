@@ -9,29 +9,33 @@ import cl.sebastian.uno.dominio.Book;
 import cl.sebastian.uno.dominio.Publisher;
 import cl.sebastian.uno.repositories.AuthorRepository;
 import cl.sebastian.uno.repositories.BookRepository;
+import cl.sebastian.uno.repositories.PublisherRepository;
 
 @Component
 @EnableTransactionManagement
 public class TransaccionRollback {
   private final AuthorRepository ar;
   private final BookRepository br;
+  private final PublisherRepository cr;
 
-  public TransaccionRollback(final AuthorRepository ar, final BookRepository br) {
-    System.out.println("evento recibido");
+  public TransaccionRollback(final AuthorRepository ar, final BookRepository br, final PublisherRepository cr) {
     this.ar = ar;
     this.br = br;
+    this.cr = cr;
   }
 
   @Transactional(propagation = Propagation.REQUIRED)
   public void trx() {
-    final var a1 = new Author("sebastian", "avila");
-    final var b1 = new Book("titulo-1", "isbn-1", new Publisher("name-p1", "add-p1"));
+    final var p1 = new Publisher("name-px", "add-px");
+    cr.save(p1);
+    final var a1 = new Author("sebastianx", "avilax");
+    final var b1 = new Book("titulo-1x", "isbn-1x", p1);
     a1.getBooks().add(b1);
     ar.save(a1);
     b1.getAuthors().add(a1);
     br.save(b1);
-    final var a2 = new Author("elias", "montecinos");
-    final var b2 = new Book("titulo-2", "isbn-2", new Publisher("name-p2", "add-p2"));
+    final var a2 = new Author("eliasx", "montecinosx");
+    final var b2 = new Book("titulo-2x", "isbn-2x", p1);
     if (a2 != null) { // generará el rollback
       throw new IllegalStateException("forzado");
     }
